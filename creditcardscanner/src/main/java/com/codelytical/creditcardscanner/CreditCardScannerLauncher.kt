@@ -35,3 +35,26 @@ class CreditCardScannerLauncher(
     }
 }
 
+@SuppressLint("UnsafeExperimentalUsageError")
+class NfcReadLauncher(
+    private val activity: FragmentActivity,
+    private val onResult: (String?, String?, String?) -> Unit
+) {
+    private var launcher: ActivityResultLauncher<Intent> = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            val cardNumber = data?.getStringExtra("CARD_NUMBER")
+            val expiryDate = data?.getStringExtra("EXPIRY_DATE")
+            val cardType = data?.getStringExtra("CARD_TYPE")
+            onResult(cardNumber, expiryDate, cardType)
+        } else {
+            onResult(null, null, null)
+        }
+    }
+
+    fun launch() {
+        val intent = Intent(activity, NfcReadActivity::class.java)
+        launcher.launch(intent)
+    }
+}
+

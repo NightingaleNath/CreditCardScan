@@ -8,4 +8,10 @@
     <string name="wocr_button_enter_card_number">Enter card details manually</string>
     <string name="wocr_toggle_flash">Toggle flash</string>
     <string name="wocr_powered_by">Powered by CodeLytical</string>
+    <string name="hold_your_nfc_card_to_the_back">Hold your NFC Card to the back of your NFC supported phone</string>
+    <string name="card_aid">Card AID: </string>
+    <string name="application">Application: </string>
+    <string name="cardType">Card Type: </string>
+    <string name="pinTry">Pin try limit: </string>
+    <string name="extended_card_details">Extended card details</string>
 </resources>

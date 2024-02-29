@@ -1,16 +1,14 @@
 package com.codelytical.creditcardscan
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.ExperimentalGetImage
-import com.codelytical.creditcardscanner.CreditCardScannerActivity
 import com.codelytical.creditcardscanner.CreditCardScannerLauncher
+import com.codelytical.creditcardscanner.NfcReadLauncher
 
 @ExperimentalGetImage
 @SuppressLint("UnsafeExperimentalUsageError")
@@ -18,6 +16,10 @@ import com.codelytical.creditcardscanner.CreditCardScannerLauncher
 class MainActivity : AppCompatActivity() {
 
     private lateinit var scannerLauncher: CreditCardScannerLauncher
+
+    private lateinit var nfcLauncher: NfcReadLauncher
+
+    private var mNfcAdapter: NfcAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +29,17 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.scanButton).setOnClickListener {
             scannerLauncher.launch()
+        }
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this)
+
+        if (mNfcAdapter == null) {
+            Toast.makeText(this, "NFC not supported on this device", Toast.LENGTH_LONG).show()
+        } else {
+            setupNfcLauncher()
+            findViewById<Button>(R.id.nfcButton).setOnClickListener {
+                nfcLauncher.launch()
+            }
         }
 
     }
@@ -44,4 +57,17 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Card Number: $cardNumber, Expiry Date: $expiryDate", Toast.LENGTH_LONG).show()
         }
     }
+
+    private fun setupNfcLauncher() {
+        nfcLauncher = NfcReadLauncher(this, ::handleNfcResult)
+    }
+
+    private fun handleNfcResult(cardNumber: String?, expiryDate: String?, cardType: String?) {
+        if (cardNumber != null && expiryDate != null && cardType != null) {
+            Toast.makeText(this, "Card Number: $cardNumber, Expiry Date: $expiryDate", Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(this, "Null values were passed", Toast.LENGTH_LONG).show()
+        }
+    }
+
 }
